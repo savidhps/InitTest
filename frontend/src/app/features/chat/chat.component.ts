@@ -1,9 +1,12 @@
 import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { ChatService } from './services/chat.service';
 import { AuthService } from '../../core/services/auth.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { ChatRoom, Message } from '../../core/models/chat.model';
 import { Subject, takeUntil } from 'rxjs';
+import { UserSearchDialogComponent } from './user-search-dialog/user-search-dialog.component';
+import { GroupNameDialogComponent } from './group-name-dialog/group-name-dialog.component';
 
 @Component({
   selector: 'app-chat',
@@ -27,7 +30,8 @@ export class ChatComponent implements OnInit, OnDestroy {
     private chatService: ChatService,
     private authService: AuthService,
     private notificationService: NotificationService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -51,6 +55,91 @@ export class ChatComponent implements OnInit, OnDestroy {
     if (this.selectedRoom) {
       this.chatService.leaveRoom(this.selectedRoom._id);
     }
+  }
+
+  openUserSearch(): void {
+    const dialogRef = this.dialog.open(UserSearchDialogComponent, {
+      width: '500px',
+      maxWidth: '90vw'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        if (result.isGroup) {
+          // Open group name dialog
+          this.openGroupNameDialog(result.users);
+        } else {
+          // Create 1-on-1 chat
+          this.createPrivateChat(result.user);
+        }
+      }
+    });
+  }
+
+  openGroupNameDialog(users: any[]): void {
+    const dialogRef = this.dialog.open(GroupNameDialogComponent, {
+      width: '400px',
+      maxWidth: '90vw',
+      data: { users }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && result.groupName) {
+        this.createGroupChat(result.groupName, users);
+      }
+    });
+  }
+
+  createPrivateChat(user: any): void {
+    this.notificationService.showInfo('Creating chat...');
+    
+    this.chatService.createRoom({
+      type: 'private',
+      participants: [user._id]
+    }).subscribe({
+      next: (response) => {
+        if (response.success && response.data && response.data.room) {
+          this.notificationService.showSuccess('Chat created successfully');
+          
+          // Check if room already exists in list
+          const existingRoom = this.rooms.find(r => r._id === response.data!.room._id);
+          if (!existingRoom) {
+            this.rooms.unshift(response.data.room);
+          }
+          
+          // Select the room
+          this.selectRoom(response.data.room);
+          this.cdr.markForCheck();
+        }
+      },
+      error: (error) => {
+        this.notificationService.showError('Failed to create chat');
+      }
+    });
+  }
+
+  createGroupChat(groupName: string, users: any[]): void {
+    this.notificationService.showInfo('Creating group...');
+    
+    const participantIds = users.map(u => u._id);
+    
+    this.chatService.createRoom({
+      name: groupName,
+      type: 'group',
+      participants: participantIds
+    }).subscribe({
+      next: (response) => {
+        if (response.success && response.data && response.data.room) {
+          this.notificationService.showSuccess('Group created successfully');
+          this.rooms.unshift(response.data.room);
+          this.selectRoom(response.data.room);
+          this.cdr.markForCheck();
+        }
+      },
+      error: (error) => {
+        this.notificationService.showError('Failed to create group');
+      }
+    });
   }
 
   loadRooms(): void {

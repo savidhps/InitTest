@@ -2,6 +2,43 @@ const User = require('../models/User');
 
 class UserController {
   /**
+   * Search users (for chat)
+   * GET /api/users/search
+   */
+  async searchUsers(req, res, next) {
+    try {
+      const { q = '', limit = 20 } = req.query;
+      const currentUserId = req.user.userId;
+
+      const query = {
+        _id: { $ne: currentUserId }, // Exclude current user
+        status: 'active' // Only active users
+      };
+
+      // Search by name or email
+      if (q) {
+        query.$or = [
+          { firstName: { $regex: q, $options: 'i' } },
+          { lastName: { $regex: q, $options: 'i' } },
+          { email: { $regex: q, $options: 'i' } }
+        ];
+      }
+
+      const users = await User.find(query)
+        .select('firstName lastName email avatarUrl status')
+        .limit(parseInt(limit))
+        .sort({ firstName: 1, lastName: 1 });
+
+      res.json({
+        success: true,
+        data: { users }
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
    * Get all users
    * GET /api/users
    */

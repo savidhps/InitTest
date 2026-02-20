@@ -19,6 +19,17 @@ router.post(
 );
 
 /**
+ * @route   GET /api/users/search
+ * @desc    Search users (for chat)
+ * @access  Private (All authenticated users)
+ */
+router.get(
+  '/search',
+  verifyToken,
+  userController.searchUsers
+);
+
+/**
  * @route   GET /api/users
  * @desc    Get all users
  * @access  Private (Admin only)

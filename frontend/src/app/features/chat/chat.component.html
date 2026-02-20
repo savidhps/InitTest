@@ -3,9 +3,14 @@
   <div class="room-list">
     <div class="room-list-header">
       <h2>Chats</h2>
-      <button mat-icon-button (click)="loadRooms()" matTooltip="Refresh">
-        <mat-icon>refresh</mat-icon>
-      </button>
+      <div class="header-actions">
+        <button mat-icon-button (click)="openUserSearch()" matTooltip="New Chat">
+          <mat-icon>add_comment</mat-icon>
+        </button>
+        <button mat-icon-button (click)="loadRooms()" matTooltip="Refresh">
+          <mat-icon>refresh</mat-icon>
+        </button>
+      </div>
     </div>
 
     <div *ngIf="loading" class="loading-rooms">

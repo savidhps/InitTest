@@ -1,0 +1,101 @@
+<div class="user-search-dialog">
+  <h2 mat-dialog-title>
+    {{ isGroupMode ? 'Create Group Chat' : 'Start New Chat' }}
+  </h2>
+
+  <mat-dialog-content>
+    <!-- Mode Toggle -->
+    <div class="mode-toggle">
+      <button 
+        mat-stroked-button 
+        [color]="!isGroupMode ? 'primary' : ''"
+        (click)="isGroupMode && toggleGroupMode()">
+        <mat-icon>person</mat-icon>
+        1-on-1 Chat
+      </button>
+      <button 
+        mat-stroked-button 
+        [color]="isGroupMode ? 'primary' : ''"
+        (click)="!isGroupMode && toggleGroupMode()">
+        <mat-icon>group</mat-icon>
+        Group Chat
+      </button>
+    </div>
+
+    <!-- Search Input -->
+    <mat-form-field class="search-field" appearance="outline">
+      <mat-label>Search users</mat-label>
+      <input 
+        matInput 
+        [formControl]="searchControl"
+        placeholder="Search by name or email..."
+        autocomplete="off">
+      <mat-icon matPrefix>search</mat-icon>
+      <button 
+        mat-icon-button 
+        matSuffix 
+        *ngIf="searchControl.value"
+        (click)="searchControl.setValue('')">
+        <mat-icon>close</mat-icon>
+      </button>
+    </mat-form-field>
+
+    <!-- Selected Users (Group Mode) -->
+    <div class="selected-users" *ngIf="isGroupMode && selectedUsers.length > 0">
+      <h4>Selected ({{ selectedUsers.length }})</h4>
+      <div class="chips-container">
+        <mat-chip-set>
+          <mat-chip 
+            *ngFor="let user of selectedUsers"
+            (removed)="toggleUserSelection(user)">
+            {{ user.firstName }} {{ user.lastName }}
+            <button matChipRemove>
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip>
+        </mat-chip-set>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading" *ngIf="loading">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <!-- User List -->
+    <mat-list class="user-list" *ngIf="!loading">
+      <mat-list-item 
+        *ngFor="let user of users"
+        (click)="selectUser(user)"
+        [class.selected]="isUserSelected(user)">
+        <mat-icon matListItemIcon>
+          {{ isGroupMode ? (isUserSelected(user) ? 'check_circle' : 'radio_button_unchecked') : 'person' }}
+        </mat-icon>
+        <div matListItemTitle>{{ user.firstName }} {{ user.lastName }}</div>
+        <div matListItemLine>{{ user.email }}</div>
+      </mat-list-item>
+
+      <div *ngIf="users.length === 0 && searchControl.value" class="no-results">
+        <mat-icon>search_off</mat-icon>
+        <p>No users found</p>
+      </div>
+
+      <div *ngIf="users.length === 0 && !searchControl.value" class="no-results">
+        <mat-icon>people_outline</mat-icon>
+        <p>Start typing to search users</p>
+      </div>
+    </mat-list>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="cancel()">Cancel</button>
+    <button 
+      mat-raised-button 
+      color="primary"
+      *ngIf="isGroupMode"
+      [disabled]="selectedUsers.length < 2"
+      (click)="createGroup()">
+      Create Group ({{ selectedUsers.length }})
+    </button>
+  </mat-dialog-actions>
+</div>

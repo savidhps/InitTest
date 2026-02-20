@@ -1,0 +1,49 @@
+<div class="group-name-dialog">
+  <h2 mat-dialog-title>Create Group Chat</h2>
+
+  <mat-dialog-content>
+    <p class="member-count">
+      <mat-icon>group</mat-icon>
+      {{ data.users.length + 1 }} members
+    </p>
+
+    <mat-form-field class="group-name-field" appearance="outline">
+      <mat-label>Group Name</mat-label>
+      <input 
+        matInput 
+        [formControl]="groupNameControl"
+        placeholder="Enter group name..."
+        maxlength="50"
+        autocomplete="off"
+        (keyup.enter)="create()">
+      <mat-hint align="end">{{ groupNameControl.value?.length || 0 }}/50</mat-hint>
+      <mat-error *ngIf="groupNameControl.hasError('required')">
+        Group name is required
+      </mat-error>
+      <mat-error *ngIf="groupNameControl.hasError('minlength')">
+        Group name must be at least 3 characters
+      </mat-error>
+    </mat-form-field>
+
+    <div class="members-preview">
+      <h4>Members</h4>
+      <mat-chip-set>
+        <mat-chip *ngFor="let user of data.users">
+          {{ user.firstName }} {{ user.lastName }}
+        </mat-chip>
+        <mat-chip highlighted>You</mat-chip>
+      </mat-chip-set>
+    </div>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="cancel()">Cancel</button>
+    <button 
+      mat-raised-button 
+      color="primary"
+      [disabled]="!groupNameControl.valid"
+      (click)="create()">
+      Create Group
+    </button>
+  </mat-dialog-actions>
+</div>
