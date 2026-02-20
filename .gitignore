@@ -1,32 +1,18 @@
-# Root level gitignore
-
-# Exclude all markdown files except README.md
-*.md
-!README.md
-!backend/README.md
-!frontend/README.md
-
-# Exclude batch files
-*.bat
-
-# Exclude text files
-*.txt
-
-# Node modules
+# Dependencies
 node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Environment files
+# Environment variables
 .env
 .env.local
 .env.production
 
-# Logs
+# Build outputs
+dist/
+build/
 *.log
-logs/
-
-# OS files
-.DS_Store
-Thumbs.db
 
 # IDE
 .vscode/
@@ -35,15 +21,24 @@ Thumbs.db
 *.swo
 *~
 
-# Build outputs
-dist/
-build/
-tmp/
-out-tsc/
+# OS
+.DS_Store
+Thumbs.db
 
-# Angular cache
-.angular/
+# Angular
+frontend/.angular/
+frontend/dist/
 
-# Coverage
+# Backend uploads
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Testing
 coverage/
-.nyc_output/
+*.spec.ts.snap
+
+# Vercel
+.vercel
+
+# Render
+.render/
