@@ -16,6 +16,13 @@ export class AdminService {
     );
   }
 
+  createUser(userData: Partial<User>): Observable<ApiResponse<{ user: User }>> {
+    return this.http.post<ApiResponse<{ user: User }>>(
+      `${environment.apiUrl}/users`,
+      userData
+    );
+  }
+
   getUser(id: string): Observable<ApiResponse<{ user: User }>> {
     return this.http.get<ApiResponse<{ user: User }>>(
       `${environment.apiUrl}/users/${id}`

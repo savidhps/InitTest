@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { AdminService } from './services/admin.service';
 import { NotificationService } from '../../core/services/notification.service';
 import { User } from '../../core/models/user.model';
+import { AddUserDialogComponent } from './add-user-dialog/add-user-dialog.component';
 
 @Component({
   selector: 'app-admin',
@@ -106,5 +107,33 @@ export class AdminComponent implements OnInit {
   refresh(): void {
     this.notificationService.showInfo('Refreshing users...');
     this.loadUsers();
+  }
+
+  openAddUserDialog(): void {
+    const dialogRef = this.dialog.open(AddUserDialogComponent, {
+      width: '600px',
+      disableClose: true
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.createUser(result);
+      }
+    });
+  }
+
+  createUser(userData: any): void {
+    this.adminService.createUser(userData).subscribe({
+      next: (response) => {
+        if (response.success) {
+          this.notificationService.showSuccess('User created successfully');
+          this.loadUsers();
+        }
+      },
+      error: (error) => {
+        const message = error.error?.message || 'Failed to create user';
+        this.notificationService.showError(message);
+      }
+    });
   }
 }

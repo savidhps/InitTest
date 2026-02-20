@@ -18,30 +18,61 @@ export class ChatService {
   private typingSubject = new BehaviorSubject<any>(null);
   public typing$ = this.typingSubject.asObservable();
 
+  private socketInitialized = false;
+
   constructor(
     private http: HttpClient,
     private authService: AuthService
   ) {
-    this.initSocket();
+    // Don't initialize socket in constructor - wait for explicit call
   }
 
   private initSocket(): void {
+    if (this.socketInitialized && this.socket?.connected) {
+      return; // Already initialized and connected
+    }
+
     const token = this.authService.getAccessToken();
+    
+    if (!token) {
+      console.error('Cannot initialize socket: No access token available');
+      return;
+    }
+
+    // Disconnect existing socket if any
+    if (this.socket) {
+      this.socket.disconnect();
+    }
     
     this.socket = io(environment.wsUrl, {
       auth: { token },
-      transports: ['websocket', 'polling']
+      transports: ['websocket', 'polling'],
+      reconnection: true,
+      reconnectionDelay: 1000,
+      reconnectionAttempts: 5
     });
 
     this.socket.on('connect', () => {
       console.log('✅ Socket connected');
+      this.socketInitialized = true;
     });
 
     this.socket.on('disconnect', () => {
       console.log('❌ Socket disconnected');
     });
 
+    this.socket.on('connect_error', (error) => {
+      console.error('Socket connection error:', error);
+      // Try to reconnect with fresh token
+      const newToken = this.authService.getAccessToken();
+      if (newToken && this.socket.auth && typeof this.socket.auth === 'object') {
+        (this.socket.auth as any).token = newToken;
+        this.socket.connect();
+      }
+    });
+
     this.socket.on('message-received', (data: { message: Message }) => {
+      console.log('Message received:', data.message);
       const currentMessages = this.messagesSubject.value;
       this.messagesSubject.next([...currentMessages, data.message]);
     });
@@ -53,6 +84,22 @@ export class ChatService {
     this.socket.on('error', (error: any) => {
       console.error('Socket error:', error);
     });
+  }
+
+  // Ensure socket is initialized before use
+  private ensureSocketInitialized(): void {
+    if (!this.socketInitialized || !this.socket?.connected) {
+      this.initSocket();
+    }
+  }
+
+  // Reconnect socket with new token
+  reconnectSocket(): void {
+    const token = this.authService.getAccessToken();
+    if (token) {
+      this.socketInitialized = false;
+      this.initSocket();
+    }
   }
 
   // HTTP Methods
@@ -83,14 +130,21 @@ export class ChatService {
 
   // Socket Methods
   joinRoom(roomId: string): void {
+    this.ensureSocketInitialized();
+    console.log('Joining room:', roomId);
     this.socket.emit('join-room', { roomId });
   }
 
   leaveRoom(roomId: string): void {
-    this.socket.emit('leave-room', { roomId });
+    if (this.socket?.connected) {
+      console.log('Leaving room:', roomId);
+      this.socket.emit('leave-room', { roomId });
+    }
   }
 
   sendMessage(roomId: string, content: string, messageType: string = 'text', attachments: any[] = []): void {
+    this.ensureSocketInitialized();
+    console.log('Sending message:', { roomId, content, messageType, attachments });
     this.socket.emit('send-message', {
       roomId,
       content,
@@ -100,11 +154,15 @@ export class ChatService {
   }
 
   startTyping(roomId: string): void {
-    this.socket.emit('typing-start', { roomId });
+    if (this.socket?.connected) {
+      this.socket.emit('typing-start', { roomId });
+    }
   }
 
   stopTyping(roomId: string): void {
-    this.socket.emit('typing-stop', { roomId });
+    if (this.socket?.connected) {
+      this.socket.emit('typing-stop', { roomId });
+    }
   }
 
   clearMessages(): void {

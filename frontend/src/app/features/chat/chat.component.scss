@@ -237,25 +237,169 @@ mat-list-item {
   }
 }
 
+// Tablet
+@media (max-width: 1024px) {
+  .room-list {
+    width: 280px;
+  }
+
+  .message-bubble {
+    max-width: 75%;
+  }
+}
+
+// Mobile landscape / Small tablet
 @media (max-width: 768px) {
+  .chat-container {
+    height: calc(100vh - 56px);
+  }
+
   .room-list {
     width: 250px;
+  }
+
+  .room-list-header {
+    padding: 12px;
+
+    h2 {
+      font-size: 18px;
+    }
+  }
+
+  .chat-header {
+    padding: 12px;
+  }
+
+  .chat-header-info {
+    h3 {
+      font-size: 16px;
+    }
+
+    mat-icon {
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
+    }
+  }
+
+  .message-list {
+    padding: 16px;
+  }
+
+  .message-bubble {
+    max-width: 80%;
+    padding: 10px 14px;
+  }
+
+  .message-input-container {
+    padding: 12px;
+    gap: 8px;
+  }
+}
+
+// Mobile portrait
+@media (max-width: 600px) {
+  .chat-container {
+    flex-direction: column;
+    border-radius: 0;
+  }
+
+  .room-list {
+    width: 100%;
+    max-height: 40vh;
+    border-right: none;
+    border-bottom: 1px solid #e0e0e0;
+    overflow-y: auto;
+  }
+
+  .room-list-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .chat-area {
+    height: 60vh;
   }
 
   .message-bubble {
     max-width: 85%;
   }
+
+  .no-room-selected {
+    mat-icon {
+      font-size: 48px;
+      width: 48px;
+      height: 48px;
+    }
+
+    p {
+      font-size: 14px;
+      padding: 0 20px;
+    }
+  }
 }
 
-@media (max-width: 600px) {
-  .chat-container {
-    flex-direction: column;
+// Small mobile
+@media (max-width: 480px) {
+  .room-list-header {
+    padding: 10px;
+
+    h2 {
+      font-size: 16px;
+    }
   }
 
-  .room-list {
-    width: 100%;
-    max-height: 200px;
-    border-right: none;
-    border-bottom: 1px solid #e0e0e0;
+  .chat-header {
+    padding: 10px;
+  }
+
+  .chat-header-info {
+    gap: 8px;
+
+    h3 {
+      font-size: 15px;
+    }
+
+    small {
+      font-size: 11px;
+    }
+
+    mat-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+  }
+
+  .message-list {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .message-bubble {
+    max-width: 90%;
+    padding: 8px 12px;
+  }
+
+  .message-content {
+    font-size: 13px;
+  }
+
+  .message-sender {
+    font-size: 11px;
+  }
+
+  .message-time {
+    font-size: 10px;
+  }
+
+  .message-input-container {
+    padding: 10px;
+  }
+
+  .no-messages {
+    padding: 24px;
+    font-size: 14px;
   }
 }

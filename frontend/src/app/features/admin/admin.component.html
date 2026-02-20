@@ -1,10 +1,16 @@
 <div class="admin-container">
   <div class="admin-header">
     <h1>User Management</h1>
-    <button mat-raised-button color="primary" (click)="refresh()">
-      <mat-icon>refresh</mat-icon>
-      Refresh
-    </button>
+    <div class="header-actions">
+      <button mat-raised-button color="accent" (click)="openAddUserDialog()">
+        <mat-icon>person_add</mat-icon>
+        Add User
+      </button>
+      <button mat-raised-button color="primary" (click)="refresh()">
+        <mat-icon>refresh</mat-icon>
+        Refresh
+      </button>
+    </div>
   </div>
 
   <mat-card>

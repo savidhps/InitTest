@@ -36,6 +36,9 @@ export class ChatComponent implements OnInit, OnDestroy {
       this.currentUserId = user._id;
     }
 
+    // Initialize socket connection
+    this.chatService.reconnectSocket();
+
     this.loadRooms();
     this.subscribeToMessages();
     this.subscribeToTyping();

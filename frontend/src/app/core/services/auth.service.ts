@@ -18,6 +18,7 @@ export class AuthService {
     private http: HttpClient,
     private router: Router
   ) {
+    // Load user and token from storage FIRST
     this.loadUserFromStorage();
   }
 
@@ -69,6 +70,8 @@ export class AuthService {
       tap((response: any) => {
         if (response.success) {
           this.accessToken = response.data.accessToken;
+          // Update localStorage with new token
+          localStorage.setItem('accessToken', response.data.accessToken);
         }
       })
     );

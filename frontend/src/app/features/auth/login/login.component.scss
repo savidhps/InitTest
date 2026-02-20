@@ -69,8 +69,74 @@ mat-form-field {
   }
 }
 
+// Tablet
+@media (max-width: 768px) {
+  .login-card {
+    max-width: 400px;
+    padding: 16px;
+  }
+
+  mat-card-header {
+    h1 {
+      font-size: 28px;
+    }
+  }
+}
+
+// Mobile
 @media (max-width: 600px) {
+  .login-container {
+    padding: 16px;
+  }
+
   .login-card {
     max-width: 100%;
+    padding: 16px;
+  }
+
+  mat-card-header {
+    margin-bottom: 20px;
+
+    h1 {
+      font-size: 26px;
+    }
+
+    mat-card-subtitle {
+      font-size: 13px;
+    }
+  }
+
+  .login-button {
+    height: 44px;
+    font-size: 15px;
+  }
+
+  .demo-accounts {
+    .demo-account-info {
+      font-size: 12px;
+      padding: 10px;
+    }
+  }
+}
+
+// Small mobile
+@media (max-width: 480px) {
+  .login-container {
+    padding: 12px;
+  }
+
+  .login-card {
+    padding: 12px;
+  }
+
+  mat-card-header {
+    h1 {
+      font-size: 24px;
+    }
+  }
+
+  .login-button {
+    height: 42px;
+    font-size: 14px;
   }
 }

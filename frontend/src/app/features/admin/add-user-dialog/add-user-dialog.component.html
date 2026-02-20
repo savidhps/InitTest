@@ -1,0 +1,75 @@
+<h2 mat-dialog-title>Add New User</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="userForm" class="user-form">
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>First Name</mat-label>
+        <input matInput formControlName="firstName" placeholder="Enter first name">
+        <mat-icon matPrefix>person</mat-icon>
+        <mat-error *ngIf="userForm.get('firstName')?.invalid">
+          {{ getErrorMessage('firstName') }}
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Last Name</mat-label>
+        <input matInput formControlName="lastName" placeholder="Enter last name">
+        <mat-icon matPrefix>person</mat-icon>
+        <mat-error *ngIf="userForm.get('lastName')?.invalid">
+          {{ getErrorMessage('lastName') }}
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Email</mat-label>
+      <input matInput type="email" formControlName="email" placeholder="user@example.com">
+      <mat-icon matPrefix>email</mat-icon>
+      <mat-error *ngIf="userForm.get('email')?.invalid">
+        {{ getErrorMessage('email') }}
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Password</mat-label>
+      <input matInput [type]="hidePassword ? 'password' : 'text'" formControlName="password" placeholder="Enter password">
+      <mat-icon matPrefix>lock</mat-icon>
+      <button mat-icon-button matSuffix type="button" (click)="hidePassword = !hidePassword">
+        <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+      </button>
+      <mat-hint>Minimum 6 characters</mat-hint>
+      <mat-error *ngIf="userForm.get('password')?.invalid">
+        {{ getErrorMessage('password') }}
+      </mat-error>
+    </mat-form-field>
+
+    <div class="form-row">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Role</mat-label>
+        <mat-select formControlName="role">
+          <mat-option value="user">User</mat-option>
+          <mat-option value="admin">Admin</mat-option>
+        </mat-select>
+        <mat-icon matPrefix>admin_panel_settings</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Status</mat-label>
+        <mat-select formControlName="status">
+          <mat-option value="active">Active</mat-option>
+          <mat-option value="inactive">Inactive</mat-option>
+        </mat-select>
+        <mat-icon matPrefix>toggle_on</mat-icon>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" type="button" (click)="onSubmit()" [disabled]="!userForm.valid">
+    <mat-icon>add</mat-icon>
+    Add User
+  </button>
+</mat-dialog-actions>

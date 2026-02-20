@@ -15,9 +15,14 @@
     font-weight: 500;
   }
 
-  button {
-    mat-icon {
-      margin-right: 8px;
+  .header-actions {
+    display: flex;
+    gap: 12px;
+
+    button {
+      mat-icon {
+        margin-right: 8px;
+      }
     }
   }
 }
@@ -36,11 +41,13 @@
 
 .table-container {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .users-table {
   width: 100%;
   background-color: white;
+  min-width: 600px;
 
   th {
     font-weight: 600;
@@ -94,26 +101,101 @@ mat-paginator {
   margin-top: 16px;
 }
 
+// Tablet
+@media (max-width: 1024px) {
+  .admin-header {
+    h1 {
+      font-size: 24px;
+    }
+  }
+
+  .search-field {
+    max-width: 350px;
+  }
+}
+
+// Mobile
 @media (max-width: 768px) {
   .admin-header {
     flex-direction: column;
     align-items: flex-start;
-    gap: 16px;
+    gap: 12px;
+    margin-bottom: 16px;
 
-    button {
+    h1 {
+      font-size: 22px;
+    }
+
+    .header-actions {
       width: 100%;
+      flex-direction: column;
+      gap: 8px;
+
+      button {
+        width: 100%;
+      }
     }
   }
 
   .search-field {
     max-width: 100%;
+    margin-bottom: 16px;
+  }
+
+  .table-container {
+    margin: 0 -12px;
+    padding: 0 12px;
   }
 
   .users-table {
     font-size: 14px;
+    min-width: 500px;
 
     td, th {
-      padding: 8px;
+      padding: 8px 10px;
     }
+  }
+
+  mat-chip {
+    font-size: 11px;
+    min-height: 22px;
+    padding: 3px 10px;
+  }
+
+  .loading-container {
+    padding: 40px 0;
+  }
+
+  .no-data {
+    padding: 30px;
+    font-size: 14px;
+  }
+}
+
+// Small mobile
+@media (max-width: 480px) {
+  .admin-header {
+    h1 {
+      font-size: 20px;
+    }
+  }
+
+  .users-table {
+    font-size: 13px;
+    min-width: 450px;
+
+    td, th {
+      padding: 6px 8px;
+    }
+  }
+
+  mat-chip {
+    font-size: 10px;
+    min-height: 20px;
+    padding: 2px 8px;
+  }
+
+  mat-paginator {
+    font-size: 12px;
   }
 }

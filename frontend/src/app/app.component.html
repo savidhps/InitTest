@@ -29,19 +29,19 @@
   </mat-toolbar>
 
   <mat-sidenav-container class="sidenav-container">
-    <mat-sidenav #sidenav mode="side" opened class="sidenav">
+    <mat-sidenav #sidenav [mode]="sidenavMode" [opened]="sidenavOpened" class="sidenav">
       <mat-nav-list>
-        <a mat-list-item routerLink="/dashboard" routerLinkActive="active-link">
+        <a mat-list-item routerLink="/dashboard" routerLinkActive="active-link" (click)="closeSidenavOnMobile()">
           <mat-icon matListItemIcon>dashboard</mat-icon>
           <span matListItemTitle>Dashboard</span>
         </a>
         
-        <a mat-list-item routerLink="/chat" routerLinkActive="active-link">
+        <a mat-list-item routerLink="/chat" routerLinkActive="active-link" (click)="closeSidenavOnMobile()">
           <mat-icon matListItemIcon>chat</mat-icon>
           <span matListItemTitle>Chat</span>
         </a>
         
-        <a mat-list-item routerLink="/admin" routerLinkActive="active-link" *ngIf="authService.isAdmin()">
+        <a mat-list-item routerLink="/admin" routerLinkActive="active-link" *ngIf="authService.isAdmin()" (click)="closeSidenavOnMobile()">
           <mat-icon matListItemIcon>admin_panel_settings</mat-icon>
           <span matListItemTitle>Admin</span>
         </a>
