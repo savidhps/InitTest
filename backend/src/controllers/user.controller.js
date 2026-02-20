@@ -1,0 +1,135 @@
+const User = require('../models/User');
+
+class UserController {
+  /**
+   * Get all users
+   * GET /api/users
+   */
+  async getAll(req, res, next) {
+    try {
+      const { page = 1, limit = 50, role, status } = req.query;
+
+      const query = {};
+      if (role) query.role = role;
+      if (status) query.status = status;
+
+      const users = await User.find(query)
+        .limit(limit * 1)
+        .skip((page - 1) * limit)
+        .sort({ createdAt: -1 });
+
+      const total = await User.countDocuments(query);
+
+      res.json({
+        success: true,
+        data: {
+          users,
+          pagination: {
+            page: parseInt(page),
+            limit: parseInt(limit),
+            total,
+            pages: Math.ceil(total / limit)
+          }
+        }
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Get user by ID
+   * GET /api/users/:id
+   */
+  async getById(req, res, next) {
+    try {
+      const user = await User.findById(req.params.id);
+
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: 'User not found'
+        });
+      }
+
+      res.json({
+        success: true,
+        data: { user }
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Update user
+   * PATCH /api/users/:id
+   */
+  async update(req, res, next) {
+    try {
+      const { firstName, lastName, role, status, avatarUrl } = req.body;
+
+      const user = await User.findById(req.params.id);
+
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: 'User not found'
+        });
+      }
+
+      // Update fields
+      if (firstName) user.firstName = firstName;
+      if (lastName) user.lastName = lastName;
+      if (role) user.role = role;
+      if (status) user.status = status;
+      if (avatarUrl !== undefined) user.avatarUrl = avatarUrl;
+
+      await user.save();
+
+      res.json({
+        success: true,
+        message: 'User updated successfully',
+        data: { user }
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
+   * Delete user
+   * DELETE /api/users/:id
+   */
+  async delete(req, res, next) {
+    try {
+      const user = await User.findById(req.params.id);
+
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: 'User not found'
+        });
+      }
+
+      // Prevent deleting yourself
+      if (user._id.toString() === req.user.userId) {
+        return res.status(400).json({
+          success: false,
+          message: 'Cannot delete your own account'
+        });
+      }
+
+      await user.deleteOne();
+
+      res.json({
+        success: true,
+        message: 'User deleted successfully'
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+}
+
+module.exports = new UserController();

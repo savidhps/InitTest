@@ -1,0 +1,125 @@
+<div class="chat-container">
+  <!-- Room List Sidebar -->
+  <div class="room-list">
+    <div class="room-list-header">
+      <h2>Chats</h2>
+      <button mat-icon-button (click)="loadRooms()" matTooltip="Refresh">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+
+    <div *ngIf="loading" class="loading-rooms">
+      <mat-spinner diameter="40"></mat-spinner>
+    </div>
+
+    <mat-nav-list *ngIf="!loading">
+      <mat-list-item 
+        *ngFor="let room of rooms"
+        [class.selected]="selectedRoom?._id === room._id"
+        (click)="selectRoom(room)">
+        <mat-icon matListItemIcon>
+          {{ room.type === 'group' ? 'group' : 'person' }}
+        </mat-icon>
+        <div matListItemTitle>{{ getRoomName(room) }}</div>
+        <div matListItemLine>
+          <small>{{ room.type === 'group' ? 'Group Chat' : 'Private' }}</small>
+        </div>
+      </mat-list-item>
+
+      <div *ngIf="rooms.length === 0" class="no-rooms">
+        <p>No chat rooms available</p>
+      </div>
+    </mat-nav-list>
+  </div>
+
+  <!-- Chat Area -->
+  <div class="chat-area">
+    <div *ngIf="!selectedRoom" class="no-room-selected">
+      <mat-icon>chat_bubble_outline</mat-icon>
+      <p>Select a chat room to start messaging</p>
+    </div>
+
+    <div *ngIf="selectedRoom" class="chat-content">
+      <!-- Chat Header -->
+      <div class="chat-header">
+        <div class="chat-header-info">
+          <mat-icon>{{ selectedRoom.type === 'group' ? 'group' : 'person' }}</mat-icon>
+          <div>
+            <h3>{{ getRoomName(selectedRoom) }}</h3>
+            <small>{{ selectedRoom.participants.length }} participants</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Messages -->
+      <div class="message-list">
+        <div 
+          *ngFor="let message of messages; trackBy: trackByMessageId"
+          class="message-wrapper"
+          [class.my-message]="isMyMessage(message)">
+          <div class="message-bubble">
+            <div class="message-sender" *ngIf="!isMyMessage(message)">
+              {{ message.senderId.firstName }} {{ message.senderId.lastName }}
+            </div>
+            <div class="message-content">
+              {{ message.content }}
+            </div>
+            <div class="message-attachments" *ngIf="message.attachments && message.attachments.length > 0">
+              <div *ngFor="let attachment of message.attachments" class="attachment">
+                <mat-icon>{{ attachment.fileType.startsWith('image/') ? 'image' : 'attach_file' }}</mat-icon>
+                <a [href]="'http://localhost:3000' + attachment.fileUrl" target="_blank">
+                  {{ attachment.fileName }}
+                </a>
+              </div>
+            </div>
+            <div class="message-time">
+              {{ message.createdAt | date:'short' }}
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="messages.length === 0" class="no-messages">
+          <p>No messages yet. Start the conversation!</p>
+        </div>
+
+        <!-- Typing Indicator -->
+        <div *ngIf="getTypingUsersCount() > 0" class="typing-indicator">
+          <span>Someone is typing...</span>
+        </div>
+      </div>
+
+      <!-- Message Input -->
+      <div class="message-input-container">
+        <button mat-icon-button (click)="fileInput.click()" matTooltip="Attach file">
+          <mat-icon>attach_file</mat-icon>
+        </button>
+        <input 
+          #fileInput 
+          type="file" 
+          style="display: none;" 
+          (change)="onFileSelected($event)"
+          accept="image/*,.pdf,.txt">
+
+        <mat-form-field class="message-input" appearance="outline">
+          <input 
+            matInput 
+            [(ngModel)]="messageContent"
+            (keyup.enter)="sendMessage()"
+            (input)="onTyping()"
+            (blur)="onStopTyping()"
+            placeholder="Type a message..."
+            [disabled]="sending">
+        </mat-form-field>
+
+        <button 
+          mat-fab 
+          color="primary" 
+          (click)="sendMessage()"
+          [disabled]="!messageContent.trim() || sending"
+          matTooltip="Send message">
+          <mat-icon>send</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

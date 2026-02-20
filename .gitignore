@@ -1,0 +1,49 @@
+# Root level gitignore
+
+# Exclude all markdown files except README.md
+*.md
+!README.md
+!backend/README.md
+!frontend/README.md
+
+# Exclude batch files
+*.bat
+
+# Exclude text files
+*.txt
+
+# Node modules
+node_modules/
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Build outputs
+dist/
+build/
+tmp/
+out-tsc/
+
+# Angular cache
+.angular/
+
+# Coverage
+coverage/
+.nyc_output/
