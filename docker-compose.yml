@@ -27,7 +27,7 @@ services:
     environment:
       - NODE_ENV=development
       - PORT=3000
-      - MONGODB_URI=mongodb+srv://savidhps:mern@cluster0.xm4oah1.mongodb.net/datafloat?appName=Cluster0
+      - MONGODB_URI=url
       - JWT_SECRET=dashsphere-jwt-secret-key-for-development
       - JWT_EXPIRES_IN=15m
       - REFRESH_TOKEN_SECRET=dashsphere-refresh-token-secret-for-development
