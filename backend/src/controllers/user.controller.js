@@ -38,6 +38,43 @@ class UserController {
   }
 
   /**
+   * Create new user
+   * POST /api/users
+   */
+  async create(req, res, next) {
+    try {
+      const { email, password, firstName, lastName, role, status } = req.body;
+
+      // Check if user already exists
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        return res.status(400).json({
+          success: false,
+          message: 'User with this email already exists'
+        });
+      }
+
+      // Create new user
+      const user = await User.create({
+        email,
+        password,
+        firstName,
+        lastName,
+        role: role || 'user',
+        status: status || 'active'
+      });
+
+      res.status(201).json({
+        success: true,
+        message: 'User created successfully',
+        data: { user }
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  /**
    * Get user by ID
    * GET /api/users/:id
    */

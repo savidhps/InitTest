@@ -5,6 +5,20 @@ const { verifyToken, requireRole } = require('../middleware/auth');
 const { validationRules, validate } = require('../middleware/validator');
 
 /**
+ * @route   POST /api/users
+ * @desc    Create new user
+ * @access  Private (Admin only)
+ */
+router.post(
+  '/',
+  verifyToken,
+  requireRole('admin'),
+  validationRules.createUser,
+  validate,
+  userController.create
+);
+
+/**
  * @route   GET /api/users
  * @desc    Get all users
  * @access  Private (Admin only)
