@@ -24,8 +24,7 @@ describe('Admin Panel', () => {
   });
 
   it('should have action buttons', () => {
-    cy.get('button[aria-label*="Edit"]').should('exist');
-    cy.get('button[aria-label*="Delete"]').should('exist');
+    cy.get('button[matTooltip="Actions"]').should('exist');
   });
 });
 

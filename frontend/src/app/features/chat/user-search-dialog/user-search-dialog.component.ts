@@ -75,7 +75,6 @@ export class UserSearchDialogComponent implements OnInit {
     
     // Manually add authorization header
     const token = this.authService.getAccessToken();
-    console.log('Making request with token:', token ? 'Present' : 'Missing');
     
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
@@ -88,17 +87,12 @@ export class UserSearchDialogComponent implements OnInit {
     this.loading = true;
     this.loadUsers().subscribe({
       next: (response) => {
-        console.log('User search response:', response);
         if (response.success) {
           this.users = response.data.users;
-          console.log(`Loaded ${this.users.length} users`);
         }
         this.loading = false;
       },
       error: (error) => {
-        console.error('Failed to load users:', error);
-        console.error('Error status:', error.status);
-        console.error('Error message:', error.message);
         this.loading = false;
       }
     });

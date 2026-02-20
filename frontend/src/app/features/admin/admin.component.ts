@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
@@ -10,7 +10,8 @@ import { AddUserDialogComponent } from './add-user-dialog/add-user-dialog.compon
 @Component({
   selector: 'app-admin',
   templateUrl: './admin.component.html',
-  styleUrls: ['./admin.component.scss']
+  styleUrls: ['./admin.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AdminComponent implements OnInit {
   displayedColumns: string[] = ['firstName', 'lastName', 'email', 'role', 'status', 'createdAt', 'actions'];
@@ -23,7 +24,8 @@ export class AdminComponent implements OnInit {
   constructor(
     private adminService: AdminService,
     private notificationService: NotificationService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -36,6 +38,7 @@ export class AdminComponent implements OnInit {
 
   loadUsers(page: number = 1): void {
     this.loading = true;
+    this.cdr.markForCheck(); // Trigger change detection
     this.adminService.getUsers(page, 50).subscribe({
       next: (response) => {
         if (response.success && response.data) {
@@ -43,10 +46,12 @@ export class AdminComponent implements OnInit {
           this.totalUsers = response.data.pagination?.total || 0;
         }
         this.loading = false;
+        this.cdr.markForCheck(); // Trigger change detection after data loads
       },
       error: (error) => {
         this.loading = false;
         this.notificationService.showError('Failed to load users');
+        this.cdr.markForCheck(); // Trigger change detection on error
       }
     });
   }
@@ -62,6 +67,7 @@ export class AdminComponent implements OnInit {
         },
         error: (error) => {
           this.notificationService.showError('Failed to update user role');
+          this.cdr.markForCheck();
         }
       });
     }
@@ -78,6 +84,7 @@ export class AdminComponent implements OnInit {
         },
         error: (error) => {
           this.notificationService.showError('Failed to update user status');
+          this.cdr.markForCheck();
         }
       });
     }
@@ -94,6 +101,7 @@ export class AdminComponent implements OnInit {
         },
         error: (error) => {
           this.notificationService.showError('Failed to delete user');
+          this.cdr.markForCheck();
         }
       });
     }
@@ -133,7 +141,13 @@ export class AdminComponent implements OnInit {
       error: (error) => {
         const message = error.error?.message || 'Failed to create user';
         this.notificationService.showError(message);
+        this.cdr.markForCheck();
       }
     });
+  }
+
+  // TrackBy function for performance optimization
+  trackByUserId(index: number, user: User): string {
+    return user._id;
   }
 }
