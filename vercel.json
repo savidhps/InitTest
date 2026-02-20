@@ -1,8 +1,8 @@
 {
   "version": 2,
   "name": "dashsphere-frontend",
-  "buildCommand": "cd frontend && npm install && npm run build:prod",
-  "outputDirectory": "frontend/dist/dashsphere/browser",
+  "buildCommand": "npm install && npm run build:prod",
+  "outputDirectory": "dist/dashsphere/browser",
   "framework": "angular",
   "rewrites": [
     {
